@@ -20,7 +20,7 @@ class VLC:
         self.HOST = 'localhost'
         self.PORT = port
 
-        cmd = '"{}" -I rc --vout {} --rc-host {}:{}'.format(
+        cmd = '"{}" -I rc --no-video-title --vout {} --rc-host {}:{}'.format(
             cmd, renderer, self.HOST, self.PORT)
         self.PROC = subprocess.Popen(cmd, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, shell=True)
 
