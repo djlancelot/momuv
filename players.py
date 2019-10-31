@@ -104,7 +104,7 @@ def get_int_if_possible(camera):
 @click.option('-r', '--renderer', default="opengl", help='Video render parameter passed to VLC player.')
 @click.option('-p', '--port', default=8888, type=int, help='Starting port number. Port numbers are assigned sequentially.')
 @click.option('-v', '--vlc', required=True,  help='Path to VLC executable.')
-@click.option('-s', '--stop', 'max_play', required=True, type=int,  help='Stop and wait for motion after this many seconds.')
+@click.option('-t', '--stop', 'max_play', required=True, type=int,  help='Stop and wait for motion after this many seconds.')
 @click.option('-c', '--capture', default="0", help='Camera ID or Capture stream URI to use.')
 @click.option('-s', '--sensitivity', default=90000, type=int, help='Camera sensitivity for motion alert. The higher the number the more sensitive the app,')
 def player(infiles, renderer, port, vlc, max_play, capture, sensitivity):
