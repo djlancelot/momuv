@@ -75,7 +75,7 @@ class VLCContainer:
         self.players = [VLC(cmd, port, renderer) for port in range(start_port, start_port + self.video_cnt)]
         for i in range(self.video_cnt):
             self.players[i].add(infiles[i])
-        time.sleep(0.1)
+        time.sleep(0.3)
         self.seek_zero()
         self.pause()
 
