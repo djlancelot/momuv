@@ -106,7 +106,7 @@ def get_int_if_possible(camera):
 @click.option('-v', '--vlc', required=True,  help='Path to VLC executable.')
 @click.option('-s', '--stop', 'max_play', required=True, type=int,  help='Stop and wait for motion after this many seconds.')
 @click.option('-c', '--capture', default="0", help='Camera ID or Capture stream URI to use.')
-@click.option('-s', '--sensitivity', default=100000, type=int, help='Camera sensitivity for motion alert. The higher the number the more sensitive the app,')
+@click.option('-s', '--sensitivity', default=90000, type=int, help='Camera sensitivity for motion alert. The higher the number the more sensitive the app,')
 def player(infiles, renderer, port, vlc, max_play, capture, sensitivity):
     """Motion triggered Multi-VLC player
 
@@ -144,7 +144,7 @@ def player(infiles, renderer, port, vlc, max_play, capture, sensitivity):
         if time.time() - frame_time > 1:
             if status == Status.paused:
                 movement = np.sum(frameDelta)
-                print(movement)
+                print("Movement: {}, Status: {}".format(movement, status))
                 if movement > sensitivity:
                     print("Movement, start")
                     container.pause()
@@ -158,6 +158,7 @@ def player(infiles, renderer, port, vlc, max_play, capture, sensitivity):
             if (time.time() - play_time) > max_play:
                 container.pause()
                 status = Status.paused
+                print("Paused video")
 
         if c == 27:
             break
