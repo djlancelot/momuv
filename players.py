@@ -89,15 +89,25 @@ class VLCContainer:
             player.pause()
         time.sleep(0.01)
 
+
+def get_int_if_possible(camera):
+    capture = camera
+    try:
+        capture = int(camera)
+    except ValueError:
+        capture = camera
+    finally:
+        return capture
+
 @click.command()
 @click.option('-i', '--input', 'infiles', required=True, multiple=True, help='Video file to play. Can be repeated more than once.')
 @click.option('-r', '--renderer', default="opengl", help='Video render parameter passed to VLC player.')
 @click.option('-p', '--port', default=8888, type=int, help='Starting port number. Port numbers are assigned sequentially.')
 @click.option('-v', '--vlc', required=True,  help='Path to VLC executable.')
 @click.option('-s', '--stop', 'max_play', required=True, type=int,  help='Stop and wait for motion after this many seconds.')
-@click.option('-c', '--camera', default=0, type=int, help='Camera ID to use.')
+@click.option('-c', '--capture', default="0", help='Camera ID or Capture stream URI to use.')
 @click.option('-s', '--sensitivity', default=100000, type=int, help='Camera sensitivity for motion alert. The higher the number the more sensitive the app,')
-def player(infiles, renderer, port, vlc, max_play, camera, sensitivity):
+def player(infiles, renderer, port, vlc, max_play, capture, sensitivity):
     """Motion triggered Multi-VLC player
 
     This is a simple application to play a single or multiple videos using
@@ -113,6 +123,7 @@ def player(infiles, renderer, port, vlc, max_play, camera, sensitivity):
 
     """
     container = VLCContainer(infiles, vlc, renderer, start_port=port)
+    camera = get_int_if_possible(capture)
     cap = cv2.VideoCapture(camera)
 
     # Check if the webcam is opened correctly
@@ -125,7 +136,7 @@ def player(infiles, renderer, port, vlc, max_play, camera, sensitivity):
     frame_time = time.time()
     while True:
         ret, frame = cap.read()
-        frame = cv2.resize(frame, None, fx=0.25, fy=0.25, interpolation=cv2.INTER_AREA)
+        frame = cv2.resize(frame, (160, 90), interpolation=cv2.INTER_AREA)
         if old_frame is None:
             old_frame = frame
         frameDelta = cv2.absdiff(frame, old_frame)
