@@ -117,6 +117,7 @@ def player(infiles, renderer, port, vlc, max_play, camera, sensitivity):
     if not cap.isOpened():
         raise IOError("Cannot open webcam")
 
+    status = Status.paused
     old_frame = None
     frame_time = time.time()
     while True:
