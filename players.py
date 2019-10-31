@@ -82,10 +82,12 @@ class VLCContainer:
     def seek_zero(self):
         for player in self.players:
             player.seek(0)
+        time.sleep(0.01)
 
     def pause(self):
         for player in self.players:
             player.pause()
+        time.sleep(0.01)
 
 @click.command()
 @click.option('-i', '--input', 'infiles', required=True, multiple=True, help='Video file to play. Can be repeated more than once.')
@@ -119,6 +121,7 @@ def player(infiles, renderer, port, vlc, max_play, camera, sensitivity):
 
     status = Status.paused
     old_frame = None
+    start_time = time.time()
     frame_time = time.time()
     while True:
         ret, frame = cap.read()
