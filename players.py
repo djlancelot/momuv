@@ -136,7 +136,10 @@ def player(infiles, renderer, port, vlc, max_play, capture, sensitivity):
     frame_time = time.time()
     while True:
         ret, frame = cap.read()
-        frame = cv2.resize(frame, (160, 90), interpolation=cv2.INTER_AREA)
+        try:
+            frame = cv2.resize(frame, (160, 90), interpolation=cv2.INTER_AREA)
+        except Exception as e:
+            print(e)
         if old_frame is None:
             old_frame = frame
         frameDelta = cv2.absdiff(frame, old_frame)
