@@ -30,9 +30,9 @@ Options:
   -p, --port INTEGER         Starting port number. Port numbers are assigned
                              sequentially.
   -v, --vlc TEXT             Path to VLC executable.  [required]
-  -s, --stop INTEGER         Stop and wait for motion after this many seconds.
+  -t, --stop INTEGER         Stop and wait for motion after this many seconds.
                              [required]
-  -c, --camera INTEGER       Camera ID to use.
+  -c, --capture TEXT         Camera ID or Capture stream URI to use.
   -s, --sensitivity INTEGER  Camera sensitivity for motion alert. The higher
                              the number the more sensitive the app,
   --help                     Show this message and exit.
