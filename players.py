@@ -61,6 +61,9 @@ class VLC:
     def shutdown(self):
         self.x('shutdown')
 
+    def quit(self):
+        self.x('quit')
+
     def seek(self, sec):
         self.x('seek %s' % (sec,))
 
@@ -89,6 +92,11 @@ class VLCContainer:
             player.pause()
         time.sleep(0.01)
 
+    def quit(self):
+        for player in self.players:
+            player.quit()
+        time.sleep(0.01)
+
 
 def get_int_if_possible(camera):
     capture = camera
@@ -98,6 +106,16 @@ def get_int_if_possible(camera):
         capture = camera
     finally:
         return capture
+
+
+def try_to_reconnect(camera, cap=None):
+    if cap and cap.isOpened():
+        cap.release()
+    newcap = cv2.VideoCapture(camera)
+    if not newcap.isOpened():
+        raise IOError("Cannot open camera: {}".format(camera))
+    return newcap
+
 
 @click.command()
 @click.option('-i', '--input', 'infiles', required=True, multiple=True, help='Video file to play. Can be repeated more than once.')
@@ -124,25 +142,23 @@ def player(infiles, renderer, port, vlc, max_play, capture, sensitivity):
     """
     container = VLCContainer(infiles, vlc, renderer, start_port=port)
     camera = get_int_if_possible(capture)
-    cap = cv2.VideoCapture(camera)
-
-    # Check if the webcam is opened correctly
-    if not cap.isOpened():
-        raise IOError("Cannot open webcam")
+    cap = try_to_reconnect(camera)
 
     status = Status.paused
     old_frame = None
-    start_time = time.time()
     frame_time = time.time()
     while True:
-        ret, frame = cap.read()
         try:
+            ret, frame = cap.read()
             frame = cv2.resize(frame, (160, 90), interpolation=cv2.INTER_AREA)
+            if old_frame is None:
+                old_frame = frame
+            frameDelta = cv2.absdiff(frame, old_frame)
         except Exception as e:
+            cap = try_to_reconnect(camera, cap)
             print(e)
-        if old_frame is None:
-            old_frame = frame
-        frameDelta = cv2.absdiff(frame, old_frame)
+            continue
+
         #cv2.imshow('Input', frameDelta)
         if time.time() - frame_time > 1:
             if status == Status.paused:
@@ -166,6 +182,7 @@ def player(infiles, renderer, port, vlc, max_play, capture, sensitivity):
         if c == 27:
             break
 
+    container.quit()
     cap.release()
     cv2.destroyAllWindows()
 
